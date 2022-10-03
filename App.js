@@ -1,5 +1,5 @@
-import React, { Component, useRef } from "react";
-import { View, Text, TouchableOpacity, TextInput, Switch } from "react-native";
+import React, { Component } from "react";
+import { Text, View, TextInput, Switch, TouchableOpacity } from "react-native";
 import styles from "./assets/stylesheet/BMIStyle";
 
 class Inputs extends Component {
@@ -7,10 +7,10 @@ class Inputs extends Component {
     height: "",
     heightFeet: "",
     weight: "",
-    heightMeasurement: "(Cm)",
-    heightMeasurementFeet: "(Ft)",
-    weightMeasurement: "(Kg)",
-    bmi: "",
+    heightMeasurement: "(centimeters)",
+    heightMeasurementFeet: "(feet)",
+    weightMeasurement: "(kilograms)",
+    bmiValue: "",
     BmiResult: "",
     MetricEnabled: false,
   };
@@ -18,9 +18,9 @@ class Inputs extends Component {
     if (this.state.MetricEnabled === false) {
       this.setState({
         MetricEnabled: true,
-        heightMeasurement: "(Inch)",
-        weightMeasurement: "(Lb)",
-        bmi: "",
+        heightMeasurement: "(inches)",
+        weightMeasurement: "(pounds)",
+        bmiValue: "",
         BmiResult: "",
       });
       this.TextInput.clear();
@@ -28,9 +28,9 @@ class Inputs extends Component {
     } else {
       this.setState({
         MetricEnabled: false,
-        heightMeasurement: "(Cm)",
-        weightMeasurement: "(Kg)",
-        bmi: "",
+        heightMeasurement: "(centimeters)",
+        weightMeasurement: "(kilograms)",
+        bmiValue: "",
         BmiResult: "",
       });
       this.TextInput.clear();
@@ -51,7 +51,6 @@ class Inputs extends Component {
     if (this.state.MetricEnabled) {
       height =
         parseFloat(this.state.heightFeet * 12) + parseFloat(this.state.height);
-      console.log("height", height);
       result =
         (parseFloat(weight) / (parseFloat(height) * parseFloat(height))) *
         parseFloat(703);
@@ -60,39 +59,37 @@ class Inputs extends Component {
         (parseFloat(weight) * 10000) /
         (parseFloat(height) * parseFloat(height));
     }
-    //calculation
     result = result.toFixed(2);
-    //display result
-    this.setState({ bmi: result });
+    this.setState({ bmiValue: result });
     if (result < 18.5) {
       this.setState({ BmiResult: "Underweight" });
-    } else if (result >= 18.5 && result < 25) {
-      this.setState({ BmiResult: "Normal weight" });
-    } else if (result >= 25 && result < 30) {
+    } else if (result >= 18.5 && result <= 24.9) {
+      this.setState({ BmiResult: "Normal" });
+    } else if (result >= 25 && result <= 29.9) {
       this.setState({ BmiResult: "Overweight" });
     } else if (result >= 30) {
       this.setState({ BmiResult: "Obese" });
     } else {
-      alert("Incorrect Input!");
-      this.setState({ BmiResult: "Incorrect Input!" });
+      alert("Enter Valid Input!");
+      this.setState({ BmiResult: "Enter Valid Input!" });
     }
   };
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>BMI Calculator</Text>
+      <View style={styles.layout}>
+        <Text style={styles.appTitle}>BMI Calculator</Text>
         <View style={styles.wrapper}>
           <Text style={styles.metric}>Metric</Text>
           <Switch
             style={styles.toggle}
-            trackColor={{ false: "gray", true: "green" }}
-            thumbColor={this.state.MetricEnabled ? "white" : "black"}
+            trackColor={{ false: "#BFC7C5", true: "#CB3A76" }}
+            thumbColor={this.state.MetricEnabled ? "#F1DEDE" : "#4C061D"}
             onValueChange={this.toggleSwitch}
             value={this.state.MetricEnabled}
           />
           <Text style={styles.standard}>Standard</Text>
         </View>
-        <Text style={styles.label}>Height</Text>
+        <Text style={styles.inputLabel}>Height</Text>
         <View style={styles.heightWrapper}>
           {this.state.MetricEnabled ? (
             <TextInput
@@ -100,9 +97,7 @@ class Inputs extends Component {
               ref={(input) => {
                 this.TextInput = input;
               }}
-              underlineColorAndroid="transparent"
-              placeholder={`Height ${this.state.heightMeasurementFeet}`}
-              autoCapitalize="none"
+              placeholder={`Height in ${this.state.heightMeasurementFeet}`}
               onChangeText={this.handleHeightFeet}
             />
           ) : (
@@ -113,33 +108,30 @@ class Inputs extends Component {
             ref={(input) => {
               this.TextInputInch = input;
             }}
-            underlineColorAndroid="transparent"
-            placeholder={`Height ${this.state.heightMeasurement}`}
-            autoCapitalize="none"
+            placeholder={`Height in ${this.state.heightMeasurement}`}
             onChangeText={this.handleHeight}
           />
         </View>
-        <Text style={styles.label}>Weight</Text>
+        <Text style={styles.inputLabel}>Weight</Text>
         <TextInput
           style={styles.input}
           ref={(input) => {
             this.TextInput = input;
           }}
-          underlineColorAndroid="transparent"
-          placeholder={`Weight ${this.state.weightMeasurement}`}
-          autoCapitalize="none"
+          placeholder={`Weight in ${this.state.weightMeasurement}`}
           onChangeText={this.handleWeight}
         />
         <TouchableOpacity
           style={styles.submitButton}
           onPress={() => this.calculate(this.state.height, this.state.weight)}
         >
-          <Text style={styles.submitButtonText}> Calculate </Text>
+          <Text style={styles.submitButtonText}> Calculate BMI </Text>
         </TouchableOpacity>
-        <Text style={styles.output}>{this.state.bmi}</Text>
+        <Text style={styles.bmiOutput}>{this.state.bmiValue}</Text>
         <Text style={styles.resultText}>{this.state.BmiResult}</Text>
-        <Text style={styles.helpText}>
-          {`BMI Categories:\nUnderweight = <18.5\nNormal weight = 18.5 to 24.9\nOverweight = 25 to 29.9\nObesity = BMI of 30 or greater`}
+        <Text style={styles.helpText1}>{"BMI Categories:\n"}</Text>
+        <Text style={styles.helpText2}>
+          {`Underweight: BMI of 18.5 or lesser\nNormal: 18.5 to 24.9\nOverweight: 25 to 29.9\nObese: BMI of 30 or greater`}
         </Text>
       </View>
     );

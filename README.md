@@ -6,7 +6,10 @@ To start app, use the following commands:
 
 "scripts": {
 "start": "expo start",
-"android": "expo start --anvmndroid",
+"android": "expo start --android",
 "ios": "expo start --ios",
 "web": "expo start --web"
 }
+
+<Important>
+In order to run this app on web, nvm (node version manager) should use node version 16, i.e. (node v16.17.0)
